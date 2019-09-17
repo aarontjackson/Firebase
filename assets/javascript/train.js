@@ -6,26 +6,30 @@ var firebaseConfig = {
     storageBucket: "",
     messagingSenderId: "581480693445",
     appId: "1:581480693445:web:cb9bcfe04a16ce1a897aac"
-  };
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
 
-  // Get a reference to the database service
-  var database = firebase.database().ref();
+// Get a reference to the database service
+var database = firebase.database().ref();
 
-  // Global Variables
-  var trainName;
-  var trainDestination;
-  var trainFrequency;
-  var firstTrain;
-  var trainNextArrival;
-  var trainMinutesAway;
+// Global Variables
+var trainName;
+var trainDestination;
+var trainFrequency;
+var firstTrain;
+var trainNextArrival;
+var trainMinutesAway;
 
-  // Populate firebase database with initial data
+//Current time
+$("#current-time").append(moment().format("hh:mm A"));
 
-  //Create on click event to capture form values and add ID of submit button
+// Populate firebase database with initial data
 
-  $("#add-train").on("click", function(event) {
+
+//Create on click event to capture form values and add ID of submit button
+
+$("#add-train").on("click", function (event) {
     event.preventDefault();
 
     // Captures user input
@@ -53,36 +57,48 @@ var firebaseConfig = {
     $("#destination-input").val("");
     $("#frequency-input").val("");
     $("#time-input").val("");
-  })
+})
 
-  //create firebase event to retrieve trains form the database and a table row in the html wen a user adds an entry
+//create firebase event to retrieve trains form the database and a table row in the html wen a user adds an entry
 
-  database.ref().on("child_added", function(snap) {
+database.ref().on("child_added", function (snap) {
     console.log(snap.val());
 
     var tName = snap.val().dbtrainName;
     var tDestination = snap.val().dbtrainDestination;
     var tFrequency = snap.val().dbtrainFrequency;
-    var tFirstTrain = snap.val().dbfirstTrain;       
-  });
+    var tFirstTrain = snap.val().dbfirstTrain;
+});
 
-  //store everything into a variable
-  //next arrival and mintues away calculations here
+//store everything into a variable
+//next arrival and mintues away calculations here
 
-  var tr = $("<tr>");
+//calculation to get remaining time before train arrival
+tRemainder = moment().diff(moment.unix(tFirstTrain), "minutes") % tFrequency;
+tMinutes = tFrequency - tRemainder;
 
-  //display results inside the table
+var currentTime = moment();
+console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
+$("#current-time").html("<h2> The current time is: "+currentTime+"</h2>");
 
-  tr.append(
-      "<td>"+tName+"<td>",
-      "<td>"+tDestination+"<td>",
-      "<td>"+tFrequency+"<td>",
-      "<td> To Be Calculated <td>",
-      "<td> To Be Calculated <td>"
 
-  )
+//minutes until train arrival
+tArrive = moment().add(tMinutes, "m").format("hh:mm A");
 
-  $("#train-table > tbody").append(tr)
+var tr = $("<tr>");
+
+//display results inside the table
+
+tr.append(
+    "<td>" + tName + "<td>",
+    "<td>" + tDestination + "<td>",
+    "<td>" + tFrequency + "<td>",
+    "<td> To Be Calculated <td>",
+    "<td> To Be Calculated <td>"
+
+)
+
+$("#train-table > tbody").append(tr)
 
   //create vars to hols table elements and content
   //append all table data(td) to the table row (tr)
