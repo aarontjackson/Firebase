@@ -5,7 +5,7 @@ $(document).ready(function () {
         authDomain: "traintracker-51d94.firebaseapp.com",
         databaseURL: "https://traintracker-51d94.firebaseio.com",
         projectId: "traintracker-51d94",
-        storageBucket: "",
+        storageBucket: "traintracker-51d94.appspot.com",
         messagingSenderId: "581480693445",
         appId: "1:581480693445:web:cb9bcfe04a16ce1a897aac"
     };
@@ -13,7 +13,7 @@ $(document).ready(function () {
     firebase.initializeApp(firebaseConfig);
 
     // Get a reference to the database service
-    var database = firebase.database().ref();
+    var database = firebase.database();
 
     // Populate firebase database with initial data
     // Global Variables
@@ -23,7 +23,7 @@ $(document).ready(function () {
     var firstTrain;
     // var trainNextArrival;
     // var trainMinutesAway;
-    
+
     $("#current-time").append(moment().format("HH:mm A"));
 
     //Create on click event to capture form values and add ID of submit button
@@ -35,7 +35,7 @@ $(document).ready(function () {
         trainName = $("#train-input").val().trim();
         trainDestination = $("#destination-input").val().trim();
         trainFrequency = $("#frequency-input").val().trim();
-        firstTrain = moment($("#time-input").val().trim(), "HH:mm").format("X");
+        firstTrain = $("#time-input").val().trim();
 
         // Adds user input to the log
         console.log(trainName);
@@ -61,7 +61,7 @@ $(document).ready(function () {
 
     //create firebase event to retrieve trains form the database and a table row in the html wen a user adds an entry
 
-    database.ref().on("child_added", function(snap) {
+    database.ref().on("child_added", function (snap) {
         console.log(snap.val());
 
         var tName = snap.val().dbtrainName;
@@ -80,7 +80,7 @@ $(document).ready(function () {
         // Current time
         var currentTime = moment();
         console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
-       
+
 
         // Difference between the times
         var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
